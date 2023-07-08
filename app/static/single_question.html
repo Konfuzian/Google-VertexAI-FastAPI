@@ -19,7 +19,7 @@
     <h1>Single question</h1>
     <div hx-ext="client-side-templates">
         <form>
-            <input type="text" name="human_msg" id="human_msg" placeholder="What do you want to know?" />
+            <input type="text" name="msg" id="msg" placeholder="What do you want to know?" />
             <button hx-post="http://127.0.0.1:8080/chat" 
                 hx-swap="innerHTML" 
                 hx-target="#content"

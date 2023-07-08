@@ -87,7 +87,7 @@
         <div id="create-message">
 
             <form>
-                <input type="text" id="human_msg" name="human_msg" placeholder="Enter a question..." />
+                <input type="text" id="msg" name="msg" placeholder="Enter a question..." />
                 <button 
                     id="submit-message" 
                     type="submit" 
@@ -96,8 +96,8 @@
                     hx-target="#message-history" 
                     mustache-template="response" 
                     _="on click or touchbegin 
-                    send message_sent(msg:#human_msg.value) to #message-history
-                    then call #human_msg.focus()">
+                    send message_sent(msg:#msg.value) to #message-history
+                    then call #msg.focus()">
                     Go
                 </button>
             </form>

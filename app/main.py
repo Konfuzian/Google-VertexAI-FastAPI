@@ -80,7 +80,7 @@ async def get_documentation():
 
 
 @app.post("/chat")
-async def handle_chat(human_msg: Annotated[str, Form()]):
+async def handle_chat(msg: Annotated[str, Form()]):
     """
     Endpoint to handle chat.
     Receives a message from the user, processes it, and returns a response from the model.
@@ -96,7 +96,7 @@ async def handle_chat(human_msg: Annotated[str, Form()]):
         # chat context and examples go here
     )
     # Send the human message to the model and get a response
-    response = chat.send_message(human_msg, **parameters)
+    response = chat.send_message(msg, **parameters)
     # Return the model's response
     return {"response": response.text}
 
