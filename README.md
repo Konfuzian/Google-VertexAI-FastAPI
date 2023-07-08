@@ -13,7 +13,7 @@ pip install -r requirements.txt
 Then copy the service_account.json file into the app directory.
 
 Attention for pytube: it currently has a bug, see https://stackoverflow.com/a/76611298
-You have to go to env/Lib/pytube/cipher.py and in get_throttling_function_name change function_patterns (around line 264):
+You have to go to env/Lib/site-packages/pytube/cipher.py and in get_throttling_function_name change function_patterns (around line 264):
 ```
 function_patterns = [
     r'a\.[a-zA-Z]\s*&&\s*\([a-z]\s*=\s*a\.get\("n"\)\)\s*&&.*?\|\|\s*([a-z]+)',
