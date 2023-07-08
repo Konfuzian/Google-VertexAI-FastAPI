@@ -6,11 +6,10 @@ import google.cloud.aiplatform as aiplatform
 from vertexai.preview.language_models import ChatModel, InputOutputTextPair, TextGenerationModel
 from fastapi.openapi.docs import get_swagger_ui_html, get_redoc_html
 import vertexai
-import json  # add this line
+import json
 from fastapi.staticfiles import StaticFiles
 from typing import Annotated
-
-
+import re
 
 # Load the service account json file
 # Update the values in the json file with your own
@@ -101,6 +100,7 @@ async def handle_chat(human_msg: Annotated[str, Form()]):
     # Return the model's response
     return {"response": response.text}
 
+
 @app.post("/hashtags")
 async def handle_hashtags(msg: Annotated[str, Form()]):
     """
@@ -108,32 +108,31 @@ async def handle_hashtags(msg: Annotated[str, Form()]):
     Receives a message from the user, processes it, and returns a response from the model.
     """
 
-    msg = "Tokenize the hashtags of this transcript: " + msg
+    def sanitize_hashtags(s):
+        """
+        Hashtags should only include hashtags, separated by spaces, and without duplicates.
+        A hashtag is a # sign followed by letters, numbers and underscores - all other characters should be removed.
+
+        For example:
+        "#obsidian, #markdown, #notion, #org-mode, #data view, #tag folder, #openstreetmap, #acl, #markdown, #notion, #org-mode"
+        should be turned into
+        "#obsidian #markdown #notion #org-mode #data_view #tag_folder #openstreetmap #acl"
+        """
+        hashtags = re.findall('(#[\w -]+)', response.text)
+        sanitized_hashtags = [str(s).replace('-', '_') for s in hashtags]
+        return ' '.join(sanitized_hashtags)
+
+    msg = "Your response should only include hashtags, with no commas between them, and try to generate as many hashtags as you can! Tokenize the hashtags of this transcript: " + msg
 
     model = TextGenerationModel.from_pretrained("text-bison@001")
     parameters = {
-        "temperature": 0.6,
+        "temperature": 0.95,
         "max_output_tokens": 1024,
-        "top_p": 0.4,
+        "top_p": 0.99,
         "top_k": 40,
     }
 
     response = model.predict(msg, **parameters)
+    sanitized_hashtags = sanitize_hashtags(response)
     
-    return {"response": response.text}
-
-#@app.post("/hashtags2")
-#async def handle_hashtags2(msg: Annotated[str, Form()]):
-#    vertexai.init(project="lablab-ai-hackathon", location="us-central1")
-#    parameters = {
-#        "temperature": 0.6,
-#        "max_output_tokens": 1024,
-#        "top_p": 0.4,
-#        "top_k": 40
-#    }
-#    model = TextGenerationModel.from_pretrained("text-bison@001")
-#    response = model.predict(
-#        msg,
-#        **parameters
-#    )
-#    return {"response": response.text}
+    return {"response": sanitized_hashtags}
