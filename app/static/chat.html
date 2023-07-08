@@ -11,8 +11,12 @@
     <script src="https://unpkg.com/htmx.org@1.9.2"></script>
     <script src="https://unpkg.com/htmx.org@1.9.2/dist/ext/client-side-templates.js"></script>
     <script src="https://unpkg.com/mustache@latest"></script>
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.16.22/dist/css/uikit.min.css" />
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/foundation-sites@6.7.5/dist/css/foundation.min.css" crossorigin="anonymous">
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.22/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.16.22/dist/js/uikit-icons.min.js"></script>
     <style>
         /* CSS reset from https://www.joshwcomeau.com/css/custom-css-reset/ */
 
@@ -88,14 +92,8 @@
 
             <form>
                 <input type="text" id="msg" name="msg" placeholder="Enter a question..." />
-                <button 
-                    id="submit-message" 
-                    type="submit" 
-                    hx-post="http://127.0.0.1:8080/chat" 
-                    hx-swap="beforeend"
-                    hx-target="#message-history" 
-                    mustache-template="response" 
-                    _="on click or touchbegin 
+                <button id="submit-message" type="submit" hx-post="http://127.0.0.1:8080/chat" hx-swap="beforeend"
+                    hx-target="#message-history" mustache-template="response" _="on click or touchbegin 
                     send message_sent(msg:#msg.value) to #message-history
                     then call #msg.focus()">
                     Go
