@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Summarize text</title>
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.2/dist/ext/client-side-templates.js"></script>
+    <script src="https://unpkg.com/mustache@latest"></script>
+</head>
+
+<body>
+    <h1>Summarize text</h1>
+    <div hx-ext="client-side-templates">
+        <form>
+            <input type="text" name="msg" id="msg" placeholder="What do you want to summarize?" />
+            <button hx-post="http://127.0.0.1:8080/summarize" 
+                hx-swap="innerHTML" 
+                hx-target="#content"
+                mustache-template="response">
+                Go
+            </button>
+        </form>
+
+        <p id="content">Go ahead, give me a text to summarize...</p>
+
+        <template id="response">
+            <p>response: {{response}}</p>
+        </template>
+    </div>
+</body>
+
+</html>
