@@ -1,6 +1,6 @@
 
-tl;dr
-# Set up:
+# tl;dr
+## Set up:
 ```
 git clone https://github.com/Konfuzian/Google-VertexAI-FastAPI.git
 cd Google-VertexAI-FastAPI
@@ -12,8 +12,8 @@ pip install -r requirements.txt
 
 Then copy the service_account.json file into the app directory.
 
-# Run it:
-In the command line, start the server:
+## Run it:
+In the command line, start the server (in the app directory):
 
 `uvicorn main:app --reload --port 8080`
 
