@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from google.auth import credentials
 from google.oauth2 import service_account
 import google.cloud.aiplatform as aiplatform
-from vertexai.preview.language_models import ChatModel, InputOutputTextPair
+from vertexai.preview.language_models import ChatModel, InputOutputTextPair, TextGenerationModel
 from fastapi.openapi.docs import get_swagger_ui_html, get_redoc_html
 import vertexai
 import json  # add this line
@@ -53,6 +53,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+with open("hashtag_samples.json", encoding="utf8") as f:
+    hashtag_samples = json.load(f)
+
 
 @app.get("/")
 async def root():
@@ -60,6 +63,7 @@ async def root():
     return {
         "Endpoints": {
             "chat": "/chat",
+            "hashtags": "/hashtags",
         }
     }
 
@@ -96,3 +100,40 @@ async def handle_chat(human_msg: Annotated[str, Form()]):
     response = chat.send_message(human_msg, **parameters)
     # Return the model's response
     return {"response": response.text}
+
+@app.post("/hashtags")
+async def handle_hashtags(msg: Annotated[str, Form()]):
+    """
+    Endpoint to generate hashtags for the given message.
+    Receives a message from the user, processes it, and returns a response from the model.
+    """
+
+    msg = "Tokenize the hashtags of this transcript: " + msg
+
+    model = TextGenerationModel.from_pretrained("text-bison@001")
+    parameters = {
+        "temperature": 0.6,
+        "max_output_tokens": 1024,
+        "top_p": 0.4,
+        "top_k": 40,
+    }
+
+    response = model.predict(msg, **parameters)
+    
+    return {"response": response.text}
+
+#@app.post("/hashtags2")
+#async def handle_hashtags2(msg: Annotated[str, Form()]):
+#    vertexai.init(project="lablab-ai-hackathon", location="us-central1")
+#    parameters = {
+#        "temperature": 0.6,
+#        "max_output_tokens": 1024,
+#        "top_p": 0.4,
+#        "top_k": 40
+#    }
+#    model = TextGenerationModel.from_pretrained("text-bison@001")
+#    response = model.predict(
+#        msg,
+#        **parameters
+#    )
+#    return {"response": response.text}
