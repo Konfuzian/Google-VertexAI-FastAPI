@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Form
 from fastapi.middleware.cors import CORSMiddleware
 from google.auth import credentials
 from google.oauth2 import service_account
@@ -7,6 +7,10 @@ from vertexai.preview.language_models import ChatModel, InputOutputTextPair
 from fastapi.openapi.docs import get_swagger_ui_html, get_redoc_html
 import vertexai
 import json  # add this line
+from fastapi.staticfiles import StaticFiles
+from typing import Annotated
+
+
 
 # Load the service account json file
 # Update the values in the json file with your own
@@ -34,6 +38,8 @@ vertexai.init(project=project_id, location="us-central1")
 
 # Initialize the FastAPI application
 app = FastAPI()
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Configure CORS for the application
 origins = ["http://localhost", "http://localhost:8080", "http://localhost:3000"]
@@ -71,7 +77,7 @@ async def get_documentation():
 
 
 @app.post("/chat")
-async def handle_chat(human_msg: str):
+async def handle_chat(human_msg: Annotated[str, Form()]):
     """
     Endpoint to handle chat.
     Receives a message from the user, processes it, and returns a response from the model.

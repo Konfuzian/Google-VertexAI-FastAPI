@@ -1,3 +1,32 @@
+
+tl;dr
+# Set up:
+```
+git clone https://github.com/Konfuzian/Google-VertexAI-FastAPI.git
+cd Google-VertexAI-FastAPI
+python -m venv env
+env/Scripts/activate
+cd app
+pip install -r requirements.txt
+```
+
+Then copy the service_account.json file into the app directory.
+
+# Run it:
+In the command line, start the server:
+
+`uvicorn main:app --reload --port 8080`
+
+Then open in your browser:
+
+http://localhost:8080/static/index.html
+
+
+-----------------------------------
+
+
+Here is the original README from lablab.ai:
+
 # Getting started with Vertex AI Generative AI
 
 ## Before you begin

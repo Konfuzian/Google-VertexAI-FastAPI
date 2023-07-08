@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Chat App</title>
+
+    <!-- scripts -->
+    <script src="https://unpkg.com/hyperscript.org@0.9.9"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.2/dist/ext/client-side-templates.js"></script>
+    <script src="https://unpkg.com/mustache@latest"></script>
+
+    <!-- styles -->
+    <style>
+        /* CSS reset from https://www.joshwcomeau.com/css/custom-css-reset/ */
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        * {
+            margin: 0;
+        }
+
+        body {
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* my own styles */
+
+        #content {
+            display: flex;
+            width: 80%;
+        }
+
+        #message-history {
+            padding-bottom: 10%;
+        }
+
+        #message-history>div {
+            padding: 1rem;
+            animation: fadeIn 1s;
+        }
+
+        #create-message {
+            display: flex;
+            position: fixed;
+            bottom: 0.5rem;
+            width: 100%;
+            padding: 1rem;
+        }
+
+        #human_msg {
+            flex-grow: 1;
+        }
+
+        #submit-message {
+            flex-grow: 0;
+            margin-left: 1rem;
+            padding: 0 2rem;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Chatbot</h1>
+    <div id="content" hx-ext="client-side-templates">
+        <div id="message-history" _="on message_sent(msg) put `<div>${msg}</div>` at end of me">
+            <!-- messages are inserted here -->
+        </div>
+
+        <div id="create-message">
+
+            <form>
+                <input type="text" id="human_msg" name="human_msg" placeholder="Enter a question..." />
+                <button 
+                    id="submit-message" 
+                    type="submit" 
+                    hx-post="http://127.0.0.1:8080/chat" 
+                    hx-swap="beforeend"
+                    hx-target="#message-history" 
+                    mustache-template="response" 
+                    _="on click or touchbegin 
+                    send message_sent(msg:#human_msg.value) to #message-history
+                    then call #human_msg.focus()">
+                    Go
+                </button>
+            </form>
+        </div>
+
+        <template id="response">
+            <div>response: {{response}}</div>
+        </template>
+    </div>
+</body>
+
+</html>
