@@ -6,3 +6,5 @@ app/service_account.json
 app/downloads/
 secrets.txt
 env/
+
+.space
