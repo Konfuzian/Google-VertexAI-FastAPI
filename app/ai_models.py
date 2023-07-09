@@ -61,7 +61,7 @@ def hashtags(msg: str):
         "#obsidian #markdown #notion #org-mode #data_view #tag_folder #openstreetmap #acl"
         """
         hashtags = re.findall(r'(#[\w -]+)', s)
-        sanitized_hashtags = set((str(s).replace('-', '_') for s in hashtags))
+        sanitized_hashtags = set((str(s).replace('-', '_').strip() for s in hashtags))
         return ' '.join(sanitized_hashtags)
 
     msg = "Your response should only include hashtags, and try to generate as many hashtags as you can! Tokenize the hashtags of this transcript: " + msg
