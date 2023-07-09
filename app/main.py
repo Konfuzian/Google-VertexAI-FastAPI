@@ -9,6 +9,7 @@ from fastapi.staticfiles import StaticFiles
 from typing import Annotated
 import re
 from ai_models import *
+from transcribe_youtube import get_youtube_transcript
 
 # Load the service account json file
 # Update the values in the json file with your own
@@ -113,6 +114,10 @@ async def handle_captionize(template: Annotated[str, Form()], transcript: Annota
 
 
 def captionize(template: str, transcript: str):
+
+    if re.search(r"www.youtube.com/watch\?", transcript):
+        transcript = get_youtube_transcript(transcript)
+        print(transcript)
 
     result = template
 
