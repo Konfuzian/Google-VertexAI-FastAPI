@@ -147,6 +147,10 @@ def captionize(template: str, transcript: str):
         result = result.replace(search.group(0), unique_emojis(transcript, n=n))
     
     if "{hashtags}" in template:
-        result = result.replace("{hashtags}", hashtags(transcript))
+        for i in range(3):
+            tags = hashtags(transcript)
+            if tags.strip() != '':  # retry if the created hashtags are empty
+                result = result.replace("{hashtags}", hashtags(transcript))
+                break
     
     return result
