@@ -119,6 +119,7 @@ def captionize(template: str, transcript: str):
         transcript = get_youtube_transcript(transcript)
         print("transcript:", transcript)
 
+    transcript = transcript[:35000]  # truncate the transcript because apparently there is a size limit on the API, otherwise you might get back 400 Request contains an invalid argument.
     result = template
 
     if "{summary}" in template:
