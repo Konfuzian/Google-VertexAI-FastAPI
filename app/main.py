@@ -117,7 +117,7 @@ def captionize(template: str, transcript: str):
 
     if re.search(r"www.youtube.com/watch\?", transcript):
         transcript = get_youtube_transcript(transcript)
-        print(transcript)
+        print("transcript:", transcript)
 
     result = template
 
