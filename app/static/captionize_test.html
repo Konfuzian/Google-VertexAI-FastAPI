@@ -14,7 +14,6 @@
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
     
-    
     <style>
 
         body {
@@ -101,11 +100,20 @@
         <form>
             <div class="grid">
                 <div>
-                    <label for="transcript">Transcript</label>
-                    <textarea name="transcript" id="transcript" placeholder="Transcript" rows="10"></textarea>
+                    <label for="transcript">1. Enter a 
+                        <em data-tooltip="We will fetch the transcript of the video for you!">
+                            YouTube link
+                        </em>
+                         or any 
+                        <em data-tooltip="You can also just paste some text, like a video transcript!">
+                            text
+                        </em>
+                    </label>
+                    <textarea name="transcript" id="transcript" placeholder="e.g. https://www.youtube.com/watch?v=DbsAQSIKQXk, or just paste your text/transcript here" rows="10"></textarea>
                 </div>
                 <div>
                     <label for="template">
+                        2. Define your 
                         <em data-tooltip="You can add AI-generated content: {summary}, {summary-with-emojis}, {emojis}, {unique-emojis}, {hashtags}">
                             Template
                         </em>
@@ -131,7 +139,7 @@ My Twitter: https://twitter.com/madebygoogle
                 mustache-template="response"
                 _="on click or touchbegin 
                     toggle @aria-busy='true' until htmx:afterOnLoad">
-                ▼ Captionize!
+                3. Captionize!
             </button>
         </form>
 
