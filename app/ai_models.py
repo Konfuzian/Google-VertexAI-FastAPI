@@ -125,7 +125,7 @@ def unique_emojis(msg: str, n: int = 10):
     # add random emojis until we have enough unique emojis, in case we didn't have enough before
     i = 0
     while len(unique_emojis) < n + 1:
-        unique_emojis.add(random_emojis[randint(0, len(random_emojis) + 1)])
+        unique_emojis.add(random_emojis[randint(0, len(random_emojis))])
         i += 1
         if i > 10000:
             break  # avoid infinite loops
