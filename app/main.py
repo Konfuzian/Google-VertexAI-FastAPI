@@ -119,11 +119,21 @@ def captionize(template: str, transcript: str):
         transcript = get_youtube_transcript(transcript)
         print("transcript:", transcript)
 
-    transcript = transcript[:35000]  # truncate the transcript because apparently there is a size limit on the API, otherwise you might get back 400 Request contains an invalid argument.
+    if len(transcript) > 50000:
+        # keep the start and the beginnig for long messages
+        transcript = transcript[:25000] + transcript[len(transcript) - 25000:]
     result = template
 
     if "{summary}" in template:
-        result = result.replace("{summary}", summary(transcript))
+        for i in range(5):  # retry a few times, because this can still throw google.api_core.exceptions.InvalidArgument: 400 Request contains an invalid argument.
+            try:
+                result = result.replace("{summary}", summary(transcript))
+                break
+            except Exception as e:
+                # keep only the first and the last third of the transcript (i think the middle is the least important usually...)
+                print(e)
+                transcript = transcript[:len(transcript) // 3] + transcript[2 * (len(transcript) // 3):]
+
 
     if "{summary-with-emojis}" in template:
         result = result.replace("{summary-with-emojis}", summary_with_emojis(transcript))
