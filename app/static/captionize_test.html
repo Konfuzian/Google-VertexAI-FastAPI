@@ -109,7 +109,7 @@
                             text
                         </em>
                     </label>
-                    <textarea name="transcript" id="transcript" placeholder="e.g. https://www.youtube.com/watch?v=DbsAQSIKQXk, or just paste your text/transcript here" rows="10"></textarea>
+                    <textarea name="transcript" id="transcript" rows="12" placeholder="e.g. https://www.youtube.com/watch?v=DbsAQSIKQXk,&#10;or just paste your text/transcript here"></textarea>
                 </div>
                 <div>
                     <label for="template">
@@ -118,8 +118,8 @@
                             Template
                         </em>
                     </label>
-                    <textarea name="template" id="template" placeholder="Template" rows="10">
-Hi, I'm Tris, and welcome to my YouTube channel!
+                    <textarea name="template" id="template" rows="12" placeholder="Hi, I'm Tris, and welcome to my YouTube channel!&#10;&#10;{emojis:10}&#10;&#10;{summary}&#10;&#10;My Instagram: https://www.instagram.com/example&#10;My Twitter: https://twitter.com/madebygoogle&#10;&#10;{hashtags}">
+Hi, welcome to my YouTube channel!
 
 {emojis}
 
@@ -139,12 +139,12 @@ My Twitter: https://twitter.com/madebygoogle
                 mustache-template="response"
                 _="on click or touchbegin 
                     toggle @aria-busy='true' until htmx:afterOnLoad">
-                3. Captionize!
+                ▼ Captionize!
             </button>
         </form>
 
         <div class="text-wrap">
-            <textarea id="content" rows="10" placeholder="Go ahead, ask the chatbot to captionize something..."></textarea>
+            <textarea id="content" rows="12" placeholder="3. Press `▼ Captionize!` and our AI will generate a description for your content"></textarea>
             <div class="clipboard-icon" 
                 _="on click
                 toggle .mini-bounce for 1s
