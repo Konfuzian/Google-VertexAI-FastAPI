@@ -24,11 +24,11 @@
         }
 
         hgroup {
-                margin: 0.5rem 2rem;
+                margin: 0.1rem 2rem 0.5rem;
         }
 
         .container {
-            padding-top: 1rem;
+            padding-top: 1.5rem;
         }
 
         #source-file-summary::after {
@@ -83,8 +83,8 @@
 
             <details open>
                 <summary>AND a <em data-tooltip="AI-generated content: {summary}, {hashtags}">template</em> for your video description…</summary>
-                <textarea name="captionize-template" cols="100" rows="10">
-Hi, I'm Sebastian, welcome to my YouTube channel!
+                <textarea name="captionize-template" rows="10">
+Hi, I'm Sebastian, and welcome to my YouTube channel!
 
 {summary}
 
@@ -101,7 +101,7 @@ My Twitter: https://twitter.com/madebygoogle
         <!-- </form> -->
 
         <div id="captionize-result">
-            <textarea aria-busy="true"></textarea>
+            <textarea placeholder="Press `▼ Captionize!` and our AI will generate a description for your content"></textarea>
         </div>
 
     </main>
