@@ -55,8 +55,14 @@
 </head>
 
 <body>
-    <h1>Captionize test</h1>
-    <div hx-ext="client-side-templates">
+    <nav>
+        <hgroup>
+            <h2>Captionizer</h2>
+            <i class="slogan">Let AI describe your content for you</i>
+        </hgroup>
+    </nav>
+
+    <main class="container" hx-ext="client-side-templates">
         <form>
             <div class="grid">
                 <div>
@@ -64,9 +70,15 @@
                     <textarea name="transcript" id="transcript" placeholder="Transcript" rows="10"></textarea>
                 </div>
                 <div>
-                    <label for="template">Template</label>
+                    <label for="template">
+                        <em data-tooltip="You can add AI-generated content: {summary}, {summary-with-emojis}, {emojis}, {unique-emojis}, {hashtags}">
+                            Template
+                        </em>
+                    </label>
                     <textarea name="template" id="template" placeholder="Template" rows="10">
-Hi, I'm Sebastian, and welcome to my YouTube channel!
+Hi, I'm Tris, and welcome to my YouTube channel!
+
+{emojis}
 
 {summary}
 
@@ -91,7 +103,7 @@ My Twitter: https://twitter.com/madebygoogle
         <textarea id="content" rows="10" placeholder="Go ahead, ask the chatbot to captionize something..."></textarea>
 
         <template id="response">{{response}}</template>
-    </div>
+    </main>
 </body>
 
 </html>

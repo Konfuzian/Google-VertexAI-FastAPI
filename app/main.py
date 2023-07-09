@@ -10,6 +10,13 @@ import json
 from fastapi.staticfiles import StaticFiles
 from typing import Annotated
 import re
+from itertools import cycle, islice
+from random import randint
+
+# helper functions
+def take(n, iterable):
+    "Return first n items of the iterable as a list"
+    return list(islice(iterable, n))
 
 # Load the service account json file
 # Update the values in the json file with your own
@@ -101,16 +108,15 @@ async def handle_chat(msg: Annotated[str, Form()]):
     return {"response": response.text}
 
 
-@app.post("/summarize")
-async def handle_summarize(msg: Annotated[str, Form()]):
+@app.post("/summary")
+async def handle_summary(msg: Annotated[str, Form()]):
     """
     Endpoint to generate hashtags for the given message.
     Receives a message from the user, processes it, and returns a response from the model.
     """
-    return {"response": summarize(msg)}
+    return {"response": summary(msg)}
 
-
-def summarize(msg: str):    
+def summary(msg: str):    
     msg = """Please write everything in an active voice, i.e. instead of writing "the author", write "I"! Please use enthusiastic and interesting language!
     
 Provide a summary with about three sentences for the following article: Beyond our own products, we think it\'s important to make it easy, safe and scalable for others to benefit from these advances by building on top of our best models. Next month, we\'ll start onboarding individual developers, creators and enterprises so they can try our Generative Language API, initially powered by LaMDA with a range of models to follow. Over time, we intend to create a suite of tools and APIs that will make it easy for others to build more innovative applications with AI. Having the necessary compute power to build reliable and trustworthy AI systems is also crucial to startups, and we are excited to help scale these efforts through our Google Cloud partnerships with Cohere, C3.ai and Anthropic, which was just announced last week. Stay tuned for more developer details soon.
@@ -150,10 +156,9 @@ async def handle_hashtags(msg: Annotated[str, Form()]):
     """
     return {"response": hashtags(msg)}
 
-
 def hashtags(msg: str):
     
-    def sanitize_hashtags(s):
+    def sanitize_hashtags(s: str):
         """
         Hashtags should only include hashtags, separated by spaces, and without duplicates.
         A hashtag is a # sign followed by letters, numbers and underscores - all other characters should be removed.
@@ -163,7 +168,7 @@ def hashtags(msg: str):
         should be turned into
         "#obsidian #markdown #notion #org-mode #data_view #tag_folder #openstreetmap #acl"
         """
-        hashtags = re.findall('(#[\w -]+)', response.text)
+        hashtags = re.findall(r'(#[\w -]+)', s)
         sanitized_hashtags = set((str(s).replace('-', '_') for s in hashtags))
         return ' '.join(sanitized_hashtags)
 
@@ -178,20 +183,97 @@ def hashtags(msg: str):
     }
 
     response = model.predict(msg, **parameters)
-    sanitized_hashtags = sanitize_hashtags(response)
+    
+    return sanitize_hashtags(response.text)
 
-    return sanitized_hashtags
+random_emojis = '❓🐹🚨↩️⏺🏄📠🈴🌋👽💳🔰🎓📺🏴⬜️🕕🍳🔼😻🐋🌖🕖🚅🕤⏱🔬♉️🕳🚧🚿🦂🍗🌏🐞⏪⁉️👰🚜📨🙍👅💢💥📟👩😢🍉📵🎹✒️💫😟8️⃣⛏👱💻🐽🔇🗂🗳🎽😉👛🐗🌻🈯️🏵🍿⛈⏲💤🌺💊🈹🍎👤🍸🐮🎻🐾🍩🍖⛸♦️🎭🎟💼🐂🙎🛡🛏🚍🚋🎫😨💣🙀🎉☠⛽️🕯🈂️🚟📋🔃🈸⚫️💈🗯⬅️💆🛃🛣🗡▶️👇🌇👬©️#️⃣⛅️🍫🕙📽🕠🏖💘🛠🔤📩🍛🈳☮😐🔎🏔🐈📑👚🍍🎋🈶🗾🚵⛲️🚸📫📊🐵☺️🏠🐲🚢👯🍦🚾🕡ℹ️🎴✅📀😬📏🎲🍑🍬🈷️💬🚁🌞🐦👍☁️📘🎩🆗🐫🛬📷🌘🏚📍🎣🦁🏨🔉😇🌱🍕🗻🎚💶🍰🔪🌴☢〽️🔄🍔🚘🙄🚮📔📙🙈🕦🎌®️🐕〰️🚗🎅♎️🕴🌟🐪🐯💎🏀🍈🏤📛🕰🍧😩🐒🚄🔋🍾🌤☦🕌🍯🏍😜📗🏞🏗😣➡️🚕🏬💺🎇🃏🍋🐩☣👓🏡👮👲💚😑⚱⤴️🔞🖍🕉❔🍭📥🍼🚉↕️🐊✌️⛓👷🕢📢🚓👫🐨🏳⏭🍡👜😖💭💂📁🔜😧👝🍏📡🌆🌗✨➕🆖👦😗🆎♠️🎺😺🌡🔕🔓😄😃🏮🌜🎥🕋🚊💸🏺🏹💐💪🍴😏Ⓜ️🚫⏮🦃💉👞🔫😦6️⃣⌚️🌲🌐👭🕜🅾️☘🌚🗼📇📓🐴🌷📉🐆➰1️⃣🔀3️⃣🍇🐺👼🔴👐🐛🚀📿📃🖐😷✍😕🕐🈁😸🔛🛅🌊🏘⛹🌠🍷💿🏊📐🤐⛄️🎾▪️😒🔖🏌🧀🍌🏃😹❇️💰🛐9️⃣🌝🖱👆🕘🆔👨🚛🚣📎2️⃣🏇💡🏙😯🏆*⃣➖🆕❄️🔹🈚️✝🏅🛋😳◼️📅🚹😥🐣🖲♋️🕗🚈💽🏁🐇🌈⛵️⏫😛♍️🔝🆓🉐🎤🚽🎞🙊🍓🏐😊👊😭🛂📝🈲👑📖㊗️🔨🍢🍽▫️🍊♈️✴️🚭😘🔂😠🦀🐍😓⏹📰🎄😼🚱🐰🌮🕸⭕️💔👀🏸🐘📻👣↔️🚡🎎❣🆙🕛🕷🛫🔡🎮🐧🔊🔟🐌☑️🐭🤑🚐🌪💀😱🐎🔽🚞5️⃣🌑👔👢🌵⬆️🌀🎈🎍🕝🛌7️⃣🎯◽️🚏🛁🌼🎨🎀😌😋⏬📜📲✳️😾👁⚔🍹📒🚠⛺️🕚🚻♿️📤🏑🐤🚥♏️🔶🌒⚙🚝🙆⚾️😤⛔️🗨📞🏉♥️🚆🐿🍪👎🏒🎒🎼↖️🐡🅱️⏰❌🌧🔻🕓🏕😵👗🏢😝🛍🐙🕍🍁🌾❎💑🚷🗽🔳🌄🌎🐑🎶📮🚴🌓⛪️◀️🍮🌹🗿🌃🖌❗️🤓🗜🌯🐀🌭😙💓🤒🍂◾️🐔🅿️🍤🔥📧🏩🐠🍃🛤🌫🕑🙋🌁🙃🎳🖨⚜🔲🏜🔐⬇️🗃👉✂️🚙🎐🎊🎑🐻💨☂🛳👳💄⚡️🌕🌥⚰⏸☪📸🍅📄🏭📳🌽🖇😁😅🎿⚠️✔️🆑☔️🚒📴📶🌍🔚➗🏈⛱🐃💌👻🌿😔◻️🌉🖖☄👙💝⌨⛷💗🕹0️⃣🆚⛰🔅⏏📹🏟🍻💜🎙🍘🎦🔱⚓️🗒🐄🤘🔙😶🕞🔸🚰🔒🍣🚤🐱🎪⛑🎰👥🏛💮🖕🗺💍🤗🔯♨️🍀🤔💴🔧👌🅰️❕⭐️🎁🔌🚎🛎😮♐️🍜🔏🏎💃👃📦🔗✖️🗝🔵🌂🍨💷⚽️😪🚌🔆🌅🐷☯🖊🔈🏝🈺↗️🎬👒📪🛀🙂⚗🙇😡🍞🐶🐁🌦💹🐥👺♒️💲🔮☝️👪📭🚩🔔🎏🕶⚪️💏✉️🎡🎵😆👋⌛️🌨💱🎗💖⚖😰🍺🍙🐚🙌🗄🔣🍚🍠⬛️🎆⏩🎸🕥😎🎠🚂💩🌛㊙️☹☸✊👵🔢⚒🎃♌️🎂📚🗣😿♻️📈🛄🚳♓️💟🔍🗞🔠🎱♣️🏋🕟👈🌙📕🖥🛥🈵🍥♑️🍱🌸↙️🛩🔩😴😞🏥👄😲👧👴💵🌔🕒🔭🍵📆😈🐉🐳🏦💛🛰🚦🐅👂✏️4️⃣🙏😫💠🚔🙅🖋🖼📂🏪⛩📬🀄️🔁🚃👿🐖🐐📼🏫🏂💕💁👖😚🏷👶🦄🔷💅☎️🐝😂🏧😽🐬🐟⛴🙉🌳🕊🍟🚯➿🐼📌☃💋🍐☕️🍄🌰🤖🎢🚺🚪™️🔘🔦💧🐸✋💞👟‼️⏯✡🍶🍲📣🔺👹🚼🏣🏏🗓💙🎛🌬👘🐜🗑🔑🏯💦🚲🌩👡🎖↘️🍆📯✈️🌌😀👕♊️❤️📱☀️🐓🕵⏳👏💒🕔🆘👾⛳️🌶🆒⤵️🐏🕣🛢🐢👠🤕🏰💾😍🏓🚚🚑⛎💯🉑🍝🚇🍒🚖🚶🎷👸🙁🚬↪️💇🕧⚛🕎🎧'
+
+@app.post("/emojis")
+async def handle_emojis(msg: Annotated[str, Form()]):
+    return {"response": emojis(msg)}
+
+def emojis(msg: str, n: int = 10):
+    """ Generate emojis that fit the message. n is the number of emojis that should be generated. """
+    def sanitize_emojis(s: str):
+        """ Remove anything that is not an emoji, and only return . """
+        print("original emojis", s)
+        emojis = re.sub(r'[\w\s\d,\.:�🗄]', '', s)
+        emojis = emojis if emojis != '' else '🙂'  # use default emoji if it's empty
+        return ''.join(take(n, cycle(emojis)))  # reuse emojis until size is n in case we didn't generate enough of them
+    
+    msg = "Generate fitting emojis for this message, but return only the emojis without any text or punctuation: " + msg
+
+    model = TextGenerationModel.from_pretrained("text-bison@001")
+    parameters = {
+        "temperature": 0.95,
+        "max_output_tokens": n * 4,  # a token is about 4 characters, so we multiply by 4
+        "top_p": 0.90,
+        "top_k": 40,
+    }
+
+    response = model.predict(msg, **parameters)
+
+    return sanitize_emojis(response.text)
+
+def unique_emojis(msg: str, n: int = 10):
+    unique_emojis = set(emojis(msg, n))
+
+    # add random emojis until we have enough unique emojis, in case we didn't have enough before
+    i = 0
+    while len(unique_emojis) < n + 1:
+        unique_emojis.add(random_emojis[randint(0, len(random_emojis) + 1)])
+        i += 1
+        if i > 10000:
+            break  # avoid infinite loops
+    
+    return ''.join(take(n, cycle(unique_emojis)))
+
+@app.post("/summary_with_emojis")
+async def handle_summary_with_emojis(msg: Annotated[str, Form()]):
+    return {"response": summary_with_emojis(msg)}
+
+def summary_with_emojis(msg: str):
+    return add_emojis(summary(msg))
+
+def add_emojis(msg: str):
+    msg = "Add fitting emojis to this message, but don't change the message itself: " + msg
+
+    model = TextGenerationModel.from_pretrained("text-bison@001")
+    parameters = {
+        "temperature": 0.95,
+        "max_output_tokens": 1024,
+        "top_p": 0.90,
+        "top_k": 40,
+    }
+
+    response = model.predict(msg, **parameters)
+
+    return response.text
 
 
 @app.post("/captionize")
 async def handle_captionize(template: Annotated[str, Form()], transcript: Annotated[str, Form()]):
+    return {"response": captionize(template=template, transcript=transcript)}
+
+def captionize(template: str, transcript: str):
 
     result = template
 
     if "{summary}" in template:
-        result = result.replace("{summary}", summarize(transcript))
+        result = result.replace("{summary}", summary(transcript))
+
+    if "{summary-with-emojis}" in template:
+        result = result.replace("{summary-with-emojis}", summary_with_emojis(transcript))
+
+    if search := re.search(r"\{emojis\s*:?\s*(\d+)?\}", template):
+        n = int(search.group(1))
+        result = result.replace(search.group(0), emojis(transcript, n=n))
+    
+    if search := re.search(r"\{unique-emojis\s*:?\s*(\d+)?\}", template):
+        n = int(search.group(1))
+        result = result.replace(search.group(0), unique_emojis(transcript, n=n))
     
     if "{hashtags}" in template:
         result = result.replace("{hashtags}", hashtags(transcript))
     
-    return {"response": result}
+    return result
