@@ -1,17 +1,19 @@
 <!DOCTYPE html>
-<html data-theme="dark">
+<html>
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Captionizer</title>
-
+    <title>Captionize test</title>
+    
     <script src="https://unpkg.com/hyperscript.org@0.9.9"></script>
     <script src="https://unpkg.com/htmx.org@1.9.2"></script>
-
+    <script src="https://unpkg.com/htmx.org@1.9.2/dist/ext/client-side-templates.js"></script>
+    <script src="https://unpkg.com/mustache@latest"></script>
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
-
+    
     <style>
 
         body {
@@ -31,11 +33,6 @@
             padding-top: 1.5rem;
         }
 
-        .collapse-hidden::after {
-            /* hide the collapse arrow on the "insert transcript" accordion, it should collapse with the content above it */
-            display: none;
-        }
-
         #source-file-summary::after {
             /* summary accordion collapse arrow is too far down, this fixes it */
             margin-top: -20px;
@@ -53,6 +50,41 @@
             line-height: normal;
             resize: vertical;
         }
+
+        /* positioning the clipboard icon inside textareas */
+        
+        .text-wrap {
+            position: relative;
+        }
+        
+        .clipboard-icon {
+            transition: 200ms linear;
+            -webkit-transition: -webkit-filter 200ms linear;
+
+            position: absolute;
+            font-size: 1.5rem;
+            right: 12px;
+            top: 3px;
+            filter: grayscale() opacity(30%);
+        }
+        
+        .clipboard-icon:hover {
+            cursor: pointer;
+            filter: grayscale() opacity(100%);
+        }
+
+        .mini-bounce {
+            animation: mini-bounce 0.5s ease-in-out; 
+        }
+
+        @keyframes mini-bounce {
+            0%{ -webkit-transform:scale(1);}
+            30%{ -webkit-transform:scale(1.3);}
+            60%{ -webkit-transform:scale(1);}
+            70%{ -webkit-transform:scale(1.1);}
+            100%{ -webkit-transform:scale(1);}
+        }
+
     </style>
 </head>
 
@@ -65,33 +97,31 @@
     </nav>
 
     <main class="container" hx-ext="client-side-templates">
-        <!-- <form> -->
-            <details open>
-                <summary id="source-file-summary">
-                    <div class="grid">
-                        <span>1. Insert a link to a YouTube video…</span>
-                        <span>OR upload a <em data-tooltip="Audio or text files">file</em>…</span>
-                    </div>
-                </summary>
-                <div class="grid">
-                    <div>
-                        <input type="text" name="msg" id="msg" placeholder="e.g. https://www.youtube.com/watch?v=DbsAQSIKQXk" />
-                    </div>
-                    <div>
-                        <label class="custom-file-upload">
-                            <input type="file" id="file-upload" accept=".webm,.txt" />
-                            <button >Upload file</button>
-                        </label>
-                    </div>
+        <form>
+            <div class="grid">
+                <div>
+                    <label for="transcript">1. Enter a 
+                        <em data-tooltip="We will fetch the transcript of the video for you!">
+                            YouTube link
+                        </em>
+                         or any 
+                        <em data-tooltip="You can also just paste some text, like a video transcript!">
+                            text
+                        </em>
+                    </label>
+                    <textarea name="transcript" id="transcript" rows="12" placeholder="e.g. https://www.youtube.com/watch?v=DbsAQSIKQXk,&#10;or just paste your text/transcript here"></textarea>
                 </div>
-                <summary class="collapse-hidden">OR insert a transcript…</summary>
-                <textarea name="transcript" id="transcript" placeholder="Write or paste your transcript here" rows="5"></textarea>
-            </details>
+                <div>
+                    <label for="template">
+                        2. Define your 
+                        <em data-tooltip="You can add AI-generated content: {summary}, {summary-with-emojis}, {emojis}, {unique-emojis}, {hashtags}">
+                            Template
+                        </em>
+                    </label>
+                    <textarea name="template" id="template" rows="12" placeholder="Hi, I'm Tris, and welcome to my YouTube channel!&#10;&#10;{emojis:10}&#10;&#10;{summary}&#10;&#10;My Instagram: https://www.instagram.com/example&#10;My Twitter: https://twitter.com/madebygoogle&#10;&#10;{hashtags}">
+Hi, welcome to my YouTube channel!
 
-            <details open>
-                <summary>2. Write a <em data-tooltip="Add AI-generated content: {summary}, {summary-with-emojis}, {hashtags}">template</em> for your video description…</summary>
-                <textarea name="captionize-template" rows="10">
-Hi, I'm Sebastian, and welcome to my YouTube channel!
+{emojis}
 
 {summary}
 
@@ -100,16 +130,35 @@ My Twitter: https://twitter.com/madebygoogle
 
 {hashtags}
 </textarea>
-            </details>
+                </div>
+            </div>
 
-            <button>
+            <button hx-post="http://127.0.0.1:8080/captionize" 
+                hx-swap="innerHTML" 
+                hx-target="#content"
+                mustache-template="response"
+                _="on click or touchbegin 
+                    toggle @aria-busy='true' until htmx:afterOnLoad">
                 ▼ Captionize!
             </button>
-        <!-- </form> -->
+        </form>
 
-        <div id="captionize-result">
-            <textarea rows=5 placeholder="3. Press `▼ Captionize!` and our AI will generate a description for your content"></textarea>
+        <div class="text-wrap">
+            <textarea id="content" rows="12" placeholder="3. Press `▼ Captionize!` and our AI will generate a description for your content"></textarea>
+            <div class="clipboard-icon" 
+                _="on click
+                toggle .mini-bounce for 1s
+                set text to #content.value
+                js(me, text)
+                    if ('clipboard' in window.navigator) {
+                        return navigator.clipboard.writeText(text)
+                    }
+                end"> <!-- this copy to clipboard throws an error `e is undefined`, no idea how to fix that -->
+                🗐
+            </div>
         </div>
+
+        <template id="response">{{response}}</template>
 
     </main>
 </body>

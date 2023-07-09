@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Captionizer</title>
+
+    <script src="https://unpkg.com/hyperscript.org@0.9.9"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+
+    <style>
+
+        body {
+            background-color: #11191f;
+        }
+
+        nav {
+            background-color: #11324b9c;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.192);
+        }
+
+        hgroup {
+                margin: 0.1rem 2rem 0.5rem;
+        }
+
+        .container {
+            padding-top: 1.5rem;
+        }
+
+        .collapse-hidden::after {
+            /* hide the collapse arrow on the "insert transcript" accordion, it should collapse with the content above it */
+            display: none;
+        }
+
+        #source-file-summary::after {
+            /* summary accordion collapse arrow is too far down, this fixes it */
+            margin-top: -20px;
+        }
+
+        input[type="file"] {
+            /* hack to hide the file input, add a button next to it instead */
+            display: none;
+        }
+
+        textarea {
+            font-family: monospace;
+            font-weight: 100;
+            font-size: 0.9rem;
+            line-height: normal;
+            resize: vertical;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <hgroup>
+            <h2>Captionizer</h2>
+            <i class="slogan">Let AI describe your content for you</i>
+        </hgroup>
+    </nav>
+
+    <main class="container" hx-ext="client-side-templates">
+        <!-- <form> -->
+            <details open>
+                <summary id="source-file-summary">
+                    <div class="grid">
+                        <span>1. Insert a link to a YouTube video…</span>
+                        <span>OR upload a <em data-tooltip="Audio or text files">file</em>…</span>
+                    </div>
+                </summary>
+                <div class="grid">
+                    <div>
+                        <input type="text" name="msg" id="msg" placeholder="e.g. https://www.youtube.com/watch?v=DbsAQSIKQXk" />
+                    </div>
+                    <div>
+                        <label class="custom-file-upload">
+                            <input type="file" id="file-upload" accept=".webm,.txt" />
+                            <button >Upload file</button>
+                        </label>
+                    </div>
+                </div>
+                <summary class="collapse-hidden">OR insert a transcript…</summary>
+                <textarea name="transcript" id="transcript" placeholder="Write or paste your transcript here" rows="5"></textarea>
+            </details>
+
+            <details open>
+                <summary>2. Write a <em data-tooltip="Add AI-generated content: {summary}, {summary-with-emojis}, {hashtags}">template</em> for your video description…</summary>
+                <textarea name="captionize-template" rows="10">
+Hi, I'm Sebastian, and welcome to my YouTube channel!
+
+{summary}
+
+My Instagram: https://www.instagram.com/example
+My Twitter: https://twitter.com/madebygoogle
+
+{hashtags}
+</textarea>
+            </details>
+
+            <button>
+                ▼ Captionize!
+            </button>
+        <!-- </form> -->
+
+        <div id="captionize-result">
+            <textarea rows=5 placeholder="3. Press `▼ Captionize!` and our AI will generate a description for your content"></textarea>
+        </div>
+
+    </main>
+</body>
+
+</html>
