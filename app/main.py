@@ -196,7 +196,6 @@ def emojis(msg: str, n: int = 10):
     """ Generate emojis that fit the message. n is the number of emojis that should be generated. """
     def sanitize_emojis(s: str):
         """ Remove anything that is not an emoji, and only return . """
-        print("original emojis", s)
         emojis = re.sub(r'[\w\s\d,\.:�🗄]', '', s)
         emojis = emojis if emojis != '' else '🙂'  # use default emoji if it's empty
         return ''.join(take(n, cycle(emojis)))  # reuse emojis until size is n in case we didn't generate enough of them
