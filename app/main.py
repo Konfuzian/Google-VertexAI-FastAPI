@@ -10,6 +10,8 @@ import json
 from fastapi.staticfiles import StaticFiles
 from typing import Annotated
 import re
+from google.cloud.speech_v2 import SpeechClient
+from google.cloud.speech_v2.types import cloud_speech
 
 # Load the service account json file
 # Update the values in the json file with your own
@@ -171,3 +173,30 @@ async def handle_hashtags(msg: Annotated[str, Form()]):
     sanitized_hashtags = sanitize_hashtags(response)
     
     return {"response": sanitized_hashtags}
+
+
+@app.post("/transcribe")
+async def handle_transcribe(audio_file: str = 'downloads/Hack Your Brain With Obsidianmd.webm'):
+    """Transcribe an audio file."""
+    client = SpeechClient()
+
+    # Reads a file as bytes
+    with open(audio_file, "rb") as f:
+        content = f.read()
+
+    config = cloud_speech.RecognitionConfig(
+        auto_decoding_config={}, language_codes=["en-US"], model="chirp"
+    )
+
+    request = cloud_speech.RecognizeRequest(
+        recognizer=f"projects/lablab-ai-hackathon/locations/global/recognizers/_",
+        config=config,
+        content=content,
+    )
+
+    response = client.recognize(request=request)
+
+    for result in response.results:
+        print(f"Transcript: {result.alternatives[0].transcript}")
+
+    return response
