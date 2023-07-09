@@ -51,6 +51,10 @@
             resize: vertical;
         }
 
+        label {
+            padding-bottom: 2px;
+        }
+
         /* positioning the clipboard icon inside textareas */
         
         .text-wrap {
@@ -107,16 +111,16 @@
                          or any 
                         <em data-tooltip="You can also just paste some text, like a video transcript!">
                             text
-                        </em>
+                        </em>...
                     </label>
                     <textarea name="transcript" id="transcript" rows="12" placeholder="e.g. https://www.youtube.com/watch?v=DbsAQSIKQXk,&#10;or just paste your text/transcript here"></textarea>
                 </div>
                 <div>
                     <label for="template">
                         2. Define your 
-                        <em data-tooltip="You can add AI-generated content: {summary}, {summary-with-emojis}, {emojis}, {unique-emojis}, {hashtags}">
+                        <em data-tooltip="You can add AI-generated content here: {summary}, {summary-with-emojis}, {hashtags}, {emojis}, {unique-emojis}">
                             Template
-                        </em>
+                        </em>...
                     </label>
                     <textarea name="template" id="template" rows="12" placeholder="Hi, I'm Tris, and welcome to my YouTube channel!&#10;&#10;{emojis:10}&#10;&#10;{summary}&#10;&#10;My Instagram: https://www.instagram.com/example&#10;My Twitter: https://twitter.com/madebygoogle&#10;&#10;{hashtags}">
 Hi, welcome to my YouTube channel!
@@ -133,7 +137,23 @@ My Twitter: https://twitter.com/madebygoogle
                 </div>
             </div>
 
+            <label for="captionize-button">
+                3. Press `▼ Captionize!` and then
+                <em data-tooltip="You can click here to copy the output to your clipboard!"
+                    _="on click
+                    toggle .mini-bounce for 1s
+                    set text to #content.value
+                    js(me, text)
+                        if ('clipboard' in window.navigator) {
+                            return navigator.clipboard.writeText(text)
+                        }
+                    end">
+                    copy
+                </em>
+                the output!
+            </label>
             <button hx-post="http://127.0.0.1:8080/captionize" 
+                name="captionize-button"
                 hx-swap="innerHTML" 
                 hx-target="#content"
                 mustache-template="response"
@@ -144,7 +164,7 @@ My Twitter: https://twitter.com/madebygoogle
         </form>
 
         <div class="text-wrap">
-            <textarea id="content" rows="12" placeholder="3. Press `▼ Captionize!` and our AI will generate a description for your content"></textarea>
+            <textarea id="content" rows="12" placeholder="Our AI agents will generate a description for your content"></textarea>
             <div class="clipboard-icon" 
                 _="on click
                 toggle .mini-bounce for 1s
