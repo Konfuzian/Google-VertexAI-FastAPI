@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html data-theme="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Captionizer</title>
+
+    <script src="https://unpkg.com/hyperscript.org@0.9.9"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+
+    <style>
+
+        body {
+            background-color: #11191f;
+        }
+
+        nav {
+            background-color: #11324b9c;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.192);
+        }
+
+        hgroup {
+                margin: 0.5rem 2rem;
+        }
+
+        .container {
+            padding-top: 1rem;
+        }
+
+        #source-file-summary::after {
+            /* summary accordion collapse arrow is too far down, this fixes it */
+            margin-top: -20px;
+        }
+
+        input[type="file"] {
+            /* hack to hide the file input, add a button next to it instead */
+            display: none;
+        }
+
+        textarea {
+            font-family: monospace;
+            font-weight: 100;
+            font-size: 0.9rem;
+            line-height: normal;
+            resize: vertical;
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <hgroup>
+            <h2>Captionizer</h2>
+            <i class="slogan">Let AI describe your content for you</i>
+        </hgroup>
+    </nav>
+
+    <main class="container">
+        <!-- <form> -->
+            <details open>
+                <summary id="source-file-summary">
+                    <div class="grid">
+                        <span>A link to a YouTube video…</span>
+                        <span>OR a <em data-tooltip="Audio or text files">file</em>…</span>
+                    </div>
+                </summary>
+                <div class="grid">
+                    <div>
+                        <input type="text" name="msg" id="msg" placeholder="e.g. https://www.youtube.com/watch?v=DbsAQSIKQXk" />
+                    </div>
+                    <div>
+                        <label class="custom-file-upload">
+                            <input type="file" id="file-upload" accept=".webm,.txt" />
+                            <button >Upload file</button>
+                        </label>
+                    </div>
+                </div>
+            </details>
+
+            <details open>
+                <summary>AND a <em data-tooltip="AI-generated content: {summary}, {hashtags}">template</em> for your video description…</summary>
+                <textarea name="captionize-template" cols="100" rows="10">
+Hi, I'm Sebastian, welcome to my YouTube channel!
+
+{summary}
+
+My Instagram: https://www.instagram.com/example
+My Twitter: https://twitter.com/madebygoogle
+
+{hashtags}
+</textarea>
+            </details>
+
+            <button>
+                ▼ Captionize!
+            </button>
+        <!-- </form> -->
+
+        <div id="captionize-result">
+            <textarea aria-busy="true"></textarea>
+        </div>
+
+    </main>
+</body>
+
+</html>
