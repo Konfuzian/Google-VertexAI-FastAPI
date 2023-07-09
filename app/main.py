@@ -100,7 +100,11 @@ async def handle_emojis(msg: Annotated[str, Form()]):
 
 @app.post("/summary_with_emojis")
 async def handle_summary_with_emojis(msg: Annotated[str, Form()]):
-    return {"response": add_emojis(summary(msg))}
+    return {"response": summary_with_emojis(msg)}
+
+
+def summary_with_emojis(msg: str):
+    return add_emojis(summary(msg))
 
 
 @app.post("/captionize")
