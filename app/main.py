@@ -119,11 +119,11 @@ def captionize(template: str, transcript: str):
         result = result.replace("{summary-with-emojis}", summary_with_emojis(transcript))
 
     if search := re.search(r"\{emojis\s*:?\s*(\d+)?\}", template):
-        n = int(search.group(1))
+        n = int(search.group(1)) if search.group(1) is not None else 10  # ugly hack, the else case should call emojis without n instead of setting n to 10
         result = result.replace(search.group(0), emojis(transcript, n=n))
     
     if search := re.search(r"\{unique-emojis\s*:?\s*(\d+)?\}", template):
-        n = int(search.group(1))
+        n = int(search.group(1)) if search.group(1) is not None else 10  # ugly hack, the else case should call emojis without n instead of setting n to 10
         result = result.replace(search.group(0), unique_emojis(transcript, n=n))
     
     if "{hashtags}" in template:
