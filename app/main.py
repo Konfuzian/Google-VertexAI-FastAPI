@@ -107,7 +107,13 @@ async def handle_summarize(msg: Annotated[str, Form()]):
     Endpoint to generate hashtags for the given message.
     Receives a message from the user, processes it, and returns a response from the model.
     """
-    msg = """Provide a summary with about three sentences for the following article: Beyond our own products, we think it\'s important to make it easy, safe and scalable for others to benefit from these advances by building on top of our best models. Next month, we\'ll start onboarding individual developers, creators and enterprises so they can try our Generative Language API, initially powered by LaMDA with a range of models to follow. Over time, we intend to create a suite of tools and APIs that will make it easy for others to build more innovative applications with AI. Having the necessary compute power to build reliable and trustworthy AI systems is also crucial to startups, and we are excited to help scale these efforts through our Google Cloud partnerships with Cohere, C3.ai and Anthropic, which was just announced last week. Stay tuned for more developer details soon.
+    return {"response": summarize(msg)}
+
+
+def summarize(msg: str):    
+    msg = """Please write everything in an active voice, i.e. instead of writing "the author", write "I"! Please use enthusiastic and interesting language!
+    
+Provide a summary with about three sentences for the following article: Beyond our own products, we think it\'s important to make it easy, safe and scalable for others to benefit from these advances by building on top of our best models. Next month, we\'ll start onboarding individual developers, creators and enterprises so they can try our Generative Language API, initially powered by LaMDA with a range of models to follow. Over time, we intend to create a suite of tools and APIs that will make it easy for others to build more innovative applications with AI. Having the necessary compute power to build reliable and trustworthy AI systems is also crucial to startups, and we are excited to help scale these efforts through our Google Cloud partnerships with Cohere, C3.ai and Anthropic, which was just announced last week. Stay tuned for more developer details soon.
 Summary: Google is making its AI technology more accessible to developers, creators, and enterprises. Next month, Google will start onboarding developers to try its Generative Language API, which will initially be powered by LaMDA. Over time, Google intends to create a suite of tools and APIs that will make it easy for others to build more innovative applications with AI. Google is also excited to help scale these efforts through its Google Cloud partnerships with Cohere, C3.ai, and Anthropic.
 
 Provide a summary with about three sentences for the following article: The benefits of electricPromptData kitchens go beyond climate impact, starting with speed. The first time I ever cooked on induction (electric) equipment, the biggest surprise was just how incredibly fast it is. In fact, induction boils water twice as fast as traditional gas equipment and is far more efficient — because unlike a flame, electric heat has nowhere to escape. At Bay View, our training programs help Google chefs appreciate and adjust to the new pace of induction. The speed truly opens up whole new ways of cooking.
@@ -122,7 +128,7 @@ Summary: Skiing is a great way to enjoy the outdoors and get some exercise. It c
 Provide a summary with about three sentences for the following article: Yellowstone National Park is an American national park located in the western United States, largely in the northwest corner of Wyoming and extending into Montana and Idaho. It was established by the 42nd U.S. Congress with the Yellowstone National Park Protection Act and signed into law by President Ulysses S. Grant on March 1, 1872. Yellowstone was the first national park in the U.S. and is also widely held to be the first national park in the world.The park is known for its wildlife and its many geothermal features, especially the Old Faithful geyser, one of its most popular. While it represents many types of biomes, the subalpine forest is the most abundant. It is part of the South Central Rockies forests ecoregion.
 Summary: Yellowstone National Park is the first national park in the United States and the world. It is located in the western United States, largely in the northwest corner of Wyoming and extending into Montana and Idaho. The park is known for its wildlife and its many geothermal features, especially the Old Faithful geyser.
 
-""" + msg + """
+Provide a summary with about three sentences for the following article: """ + msg + """
 Summary:"""
 
     model = TextGenerationModel.from_pretrained("text-bison@001")
@@ -133,7 +139,7 @@ Summary:"""
         "top_k": 40
     }
     response = model.predict(msg, **parameters)
-    return {"response": response.text}
+    return response.text
 
 
 @app.post("/hashtags")
@@ -142,7 +148,11 @@ async def handle_hashtags(msg: Annotated[str, Form()]):
     Endpoint to generate hashtags for the given message.
     Receives a message from the user, processes it, and returns a response from the model.
     """
+    return {"response": hashtags(msg)}
 
+
+def hashtags(msg: str):
+    
     def sanitize_hashtags(s):
         """
         Hashtags should only include hashtags, separated by spaces, and without duplicates.
@@ -169,5 +179,19 @@ async def handle_hashtags(msg: Annotated[str, Form()]):
 
     response = model.predict(msg, **parameters)
     sanitized_hashtags = sanitize_hashtags(response)
+
+    return sanitized_hashtags
+
+
+@app.post("/captionize")
+async def handle_captionize(template: Annotated[str, Form()], transcript: Annotated[str, Form()]):
+
+    result = template
+
+    if "{summary}" in template:
+        result = result.replace("{summary}", summarize(transcript))
     
-    return {"response": sanitized_hashtags}
+    if "{hashtags}" in template:
+        result = result.replace("{hashtags}", hashtags(transcript))
+    
+    return {"response": result}

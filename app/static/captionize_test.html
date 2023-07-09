@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Captionize test</title>
+    
+    <script src="https://unpkg.com/hyperscript.org@0.9.9"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.2/dist/ext/client-side-templates.js"></script>
+    <script src="https://unpkg.com/mustache@latest"></script>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    
+    
+    <style>
+
+        body {
+            background-color: #11191f;
+        }
+
+        nav {
+            background-color: #11324b9c;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.192);
+        }
+
+        hgroup {
+                margin: 0.1rem 2rem 0.5rem;
+        }
+
+        .container {
+            padding-top: 1.5rem;
+        }
+
+        #source-file-summary::after {
+            /* summary accordion collapse arrow is too far down, this fixes it */
+            margin-top: -20px;
+        }
+
+        input[type="file"] {
+            /* hack to hide the file input, add a button next to it instead */
+            display: none;
+        }
+
+        textarea {
+            font-family: monospace;
+            font-weight: 100;
+            font-size: 0.9rem;
+            line-height: normal;
+            resize: vertical;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Captionize test</h1>
+    <div hx-ext="client-side-templates">
+        <form>
+            <div class="grid">
+                <div>
+                    <label for="transcript">Transcript</label>
+                    <textarea name="transcript" id="transcript" placeholder="Transcript" rows="10"></textarea>
+                </div>
+                <div>
+                    <label for="template">Template</label>
+                    <textarea name="template" id="template" placeholder="Template" rows="10">
+Hi, I'm Sebastian, and welcome to my YouTube channel!
+
+{summary}
+
+My Instagram: https://www.instagram.com/example
+My Twitter: https://twitter.com/madebygoogle
+
+{hashtags}
+</textarea>
+                </div>
+            </div>
+
+            <button hx-post="http://127.0.0.1:8080/captionize" 
+                hx-swap="innerHTML" 
+                hx-target="#content"
+                mustache-template="response"
+                _="on click or touchbegin 
+                    toggle @aria-busy='true' until htmx:afterOnLoad">
+                ▼ Captionize!
+            </button>
+        </form>
+
+        <textarea id="content" rows="10" placeholder="Go ahead, ask the chatbot to captionize something..."></textarea>
+
+        <template id="response">{{response}}</template>
+    </div>
+</body>
+
+</html>

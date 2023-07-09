@@ -31,6 +31,11 @@
             padding-top: 1.5rem;
         }
 
+        .collapse-hidden::after {
+            /* hide the collapse arrow on the "insert transcript" accordion, it should collapse with the content above it */
+            display: none;
+        }
+
         #source-file-summary::after {
             /* summary accordion collapse arrow is too far down, this fixes it */
             margin-top: -20px;
@@ -64,8 +69,8 @@
             <details open>
                 <summary id="source-file-summary">
                     <div class="grid">
-                        <span>A link to a YouTube video…</span>
-                        <span>OR a <em data-tooltip="Audio or text files">file</em>…</span>
+                        <span>1. Insert a link to a YouTube video…</span>
+                        <span>OR upload a <em data-tooltip="Audio or text files">file</em>…</span>
                     </div>
                 </summary>
                 <div class="grid">
@@ -79,10 +84,12 @@
                         </label>
                     </div>
                 </div>
+                <summary class="collapse-hidden">OR insert a transcript…</summary>
+                <textarea name="transcript" id="transcript" placeholder="Write or paste your transcript here" rows="5"></textarea>
             </details>
 
             <details open>
-                <summary>AND a <em data-tooltip="AI-generated content: {summary}, {hashtags}">template</em> for your video description…</summary>
+                <summary>2. Write a <em data-tooltip="AI-generated content: {summary}, {hashtags}">template</em> for your video description…</summary>
                 <textarea name="captionize-template" rows="10">
 Hi, I'm Sebastian, and welcome to my YouTube channel!
 
@@ -101,7 +108,7 @@ My Twitter: https://twitter.com/madebygoogle
         <!-- </form> -->
 
         <div id="captionize-result">
-            <textarea placeholder="Press `▼ Captionize!` and our AI will generate a description for your content"></textarea>
+            <textarea rows=5 placeholder="3. Press `▼ Captionize!` and our AI will generate a description for your content"></textarea>
         </div>
 
     </main>
