@@ -30,7 +30,12 @@ Then open in your browser:
 http://localhost:8080/static/index.html
 
 
+![Screenshot of the running Captionize application](screenshot.png)
+
+
 -----------------------------------
+
+
 
 
 Here is the original README from lablab.ai:
