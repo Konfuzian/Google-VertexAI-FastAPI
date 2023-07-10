@@ -9,6 +9,8 @@
     
     <script src="https://unpkg.com/hyperscript.org@0.9.9"></script>
     <script src="https://unpkg.com/htmx.org@1.9.2"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.2/dist/ext/client-side-templates.js"></script>
+    <script src="https://unpkg.com/mustache@latest"></script>
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
     
@@ -99,7 +101,7 @@
         </hgroup>
     </nav>
 
-    <main class="container">
+    <main class="container" hx-ext="client-side-templates">
         <form>
             <div class="grid">
                 <div>
@@ -137,19 +139,7 @@ My Twitter: https://twitter.com/madebygoogle
             </div>
 
             <label for="captionize-button">
-                3. Press `▼ Captionize!` and then
-                <em data-tooltip="You can click here to copy the output to your clipboard!"
-                    _="on click
-                    toggle .mini-bounce for 1s
-                    set text to #content.value
-                    js(me, text)
-                        if ('clipboard' in window.navigator) {
-                            return navigator.clipboard.writeText(text)
-                        }
-                    end">
-                    copy
-                </em>
-                the output!
+                3. Press `▼ Captionize!` and then copy the output!
             </label>
             <button hx-post="http://127.0.0.1:8080/captionize" 
                 name="captionize-button"
@@ -162,21 +152,9 @@ My Twitter: https://twitter.com/madebygoogle
             </button>
         </form>
 
-        <div class="text-wrap">
-            <textarea id="content" rows="12" placeholder="Our AI agents will generate a description for your content"></textarea>
-            <div class="clipboard-icon" 
-                _="on click
-                toggle .mini-bounce for 1s
-                set text to #content.value
-                js(me, text)
-                    if ('clipboard' in window.navigator) {
-                        return navigator.clipboard.writeText(text)
-                    }
-                end"> <!-- this copy to clipboard throws an error `e is undefined`, no idea how to fix that -->
-                🗐
-            </div>
-        </div>
+        <textarea id="content" rows="12" placeholder="Our AI agents will generate a description for your content"></textarea>
 
+        <template id="response">{{response}}</template>
     </main>
 </body>
 

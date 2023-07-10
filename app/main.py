@@ -81,27 +81,27 @@ async def get_documentation():
 
 @app.post("/chat")
 async def handle_chat(msg: Annotated[str, Form()]):
-    return chat(msg)
+    return {"response": chat(msg)}
 
 
 @app.post("/summary")
 async def handle_summary(msg: Annotated[str, Form()]):
-    return summary(msg)
+    return {"response": summary(msg)}
 
 
 @app.post("/hashtags")
 async def handle_hashtags(msg: Annotated[str, Form()]):
-    return hashtags(msg)
+    return {"response": hashtags(msg)}
 
 
 @app.post("/emojis")
 async def handle_emojis(msg: Annotated[str, Form()]):
-    return emojis(msg)
+    return {"response": emojis(msg)}
 
 
 @app.post("/summary_with_emojis")
 async def handle_summary_with_emojis(msg: Annotated[str, Form()]):
-    return summary_with_emojis(msg)
+    return {"response": summary_with_emojis(msg)}
 
 
 def summary_with_emojis(msg: str):
@@ -110,7 +110,7 @@ def summary_with_emojis(msg: str):
 
 @app.post("/captionize")
 async def handle_captionize(template: Annotated[str, Form()], transcript: Annotated[str, Form()]):
-    return captionize(template=template, transcript=transcript)
+    return {"response": captionize(template=template, transcript=transcript)}
 
 
 def captionize(template: str, transcript: str):
