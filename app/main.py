@@ -81,27 +81,27 @@ async def get_documentation():
 
 @app.post("/chat")
 async def handle_chat(msg: Annotated[str, Form()]):
-    return {"response": chat(msg)}
+    return chat(msg)
 
 
 @app.post("/summary")
 async def handle_summary(msg: Annotated[str, Form()]):
-    return {"response": summary(msg)}
+    return summary(msg)
 
 
 @app.post("/hashtags")
 async def handle_hashtags(msg: Annotated[str, Form()]):
-    return {"response": hashtags(msg)}
+    return hashtags(msg)
 
 
 @app.post("/emojis")
 async def handle_emojis(msg: Annotated[str, Form()]):
-    return {"response": emojis(msg)}
+    return emojis(msg)
 
 
 @app.post("/summary_with_emojis")
 async def handle_summary_with_emojis(msg: Annotated[str, Form()]):
-    return {"response": summary_with_emojis(msg)}
+    return summary_with_emojis(msg)
 
 
 def summary_with_emojis(msg: str):
@@ -110,7 +110,7 @@ def summary_with_emojis(msg: str):
 
 @app.post("/captionize")
 async def handle_captionize(template: Annotated[str, Form()], transcript: Annotated[str, Form()]):
-    return {"response": captionize(template=template, transcript=transcript)}
+    return captionize(template=template, transcript=transcript)
 
 
 def captionize(template: str, transcript: str):
@@ -143,7 +143,7 @@ def captionize(template: str, transcript: str):
         result = result.replace(search.group(0), emojis(transcript, n=n))
     
     if search := re.search(r"\{unique-emojis\s*:?\s*(\d+)?\}", template):
-        n = int(search.group(1)) if search.group(1) is not None else 10  # ugly hack, the else case should call emojis without n instead of setting n to 10
+        n = int(search.group(1)) if search.group(1) is not None else 10  # ugly hack, the else case should call unique_emojis without n instead of setting n to 10
         result = result.replace(search.group(0), unique_emojis(transcript, n=n))
     
     if "{hashtags}" in template:
