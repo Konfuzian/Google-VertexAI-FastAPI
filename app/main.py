@@ -117,7 +117,8 @@ def captionize(template: str, transcript: str):
 
     if re.search(r"www.youtube.com/watch\?", transcript):
         transcript = get_youtube_transcript(transcript)
-        print("transcript:", transcript)
+    
+    print("transcript:", transcript)
 
     if len(transcript) > 50000:
         # keep the start and the beginnig for long messages
@@ -136,7 +137,15 @@ def captionize(template: str, transcript: str):
 
 
     if "{summary-with-emojis}" in template:
-        result = result.replace("{summary-with-emojis}", summary_with_emojis(transcript))
+        for i in range(5):  # retry a few times, because this can still throw google.api_core.exceptions.InvalidArgument: 400 Request contains an invalid argument.
+            try:
+                result = result.replace("{summary-with-emojis}", summary_with_emojis(transcript))
+                break
+            except Exception as e:
+                # keep only the first and the last third of the transcript (i think the middle is the least important usually...)
+                print(e)
+                transcript = transcript[:len(transcript) // 3] + transcript[2 * (len(transcript) // 3):]
+        
 
     if search := re.search(r"\{emojis\s*:?\s*(\d+)?\}", template):
         n = int(search.group(1)) if search.group(1) is not None else 10  # ugly hack, the else case should call emojis without n instead of setting n to 10
