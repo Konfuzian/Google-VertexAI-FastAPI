@@ -162,4 +162,6 @@ def captionize(template: str, transcript: str):
                 result = result.replace("{hashtags}", hashtags(transcript))
                 break
     
+    print("result:", result)
+    
     return result
