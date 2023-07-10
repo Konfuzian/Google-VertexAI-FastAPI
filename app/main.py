@@ -143,7 +143,7 @@ def captionize(template: str, transcript: str):
                 break
             except Exception as e:
                 # keep only the first and the last third of the transcript (i think the middle is the least important usually...)
-                print(e)
+                print("{summary-with-emojis}", e)
                 transcript = transcript[:len(transcript) // 3] + transcript[2 * (len(transcript) // 3):]
         
 
@@ -158,9 +158,10 @@ def captionize(template: str, transcript: str):
     if "{hashtags}" in template:
         for i in range(3):
             tags = hashtags(transcript)
-            if tags.strip() != '':  # retry if the created hashtags are empty
+            if tags.strip() != "" and tags != "{hashtags}":  # retry if the created hashtags are empty
                 result = result.replace("{hashtags}", hashtags(transcript))
                 break
+            print("retry hashtags...")
     
     print("result:", result)
     
